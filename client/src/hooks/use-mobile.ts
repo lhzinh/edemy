@@ -15,9 +15,5 @@ export function useIsMobile() {
   const getSnapshot = React.useCallback(() => getMediaQuery().matches, [])
   const getServerSnapshot = React.useCallback(() => false, [])
 
-  return React.useSyncExternalStore(
-    subscribe,
-    getSnapshot,
-    getServerSnapshot
-  )
+  return React.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 }

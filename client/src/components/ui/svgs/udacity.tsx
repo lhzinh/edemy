@@ -1,4 +1,4 @@
-import type { SVGProps } from "react";
+import type { SVGProps } from "react"
 
 const Udacity = (props: SVGProps<SVGSVGElement>) => (
   <svg {...props} viewBox="0 0 40 40">
@@ -7,6 +7,6 @@ const Udacity = (props: SVGProps<SVGSVGElement>) => (
       style={{ fill: "#02b3e4" }}
     />
   </svg>
-);
+)
 
-export { Udacity };
+export { Udacity }

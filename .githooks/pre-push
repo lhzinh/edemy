@@ -8,6 +8,9 @@ cd "$root_dir"
 echo "Running client lint..."
 (cd client && bun run lint)
 
+echo "Checking client formatting..."
+(cd client && bun run format:check)
+
 echo "Running server lint..."
 (cd server && uv run ruff check .)
 

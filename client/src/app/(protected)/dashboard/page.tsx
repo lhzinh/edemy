@@ -1,17 +1,20 @@
-import { currentUser } from '@clerk/nextjs/server';
+import { currentUser } from "@clerk/nextjs/server"
 
 export default async function DashboardPage() {
-  const user = await currentUser();
+  const user = await currentUser()
   const displayName = user?.firstName
-    ? `${user.firstName}${user.lastName ? ' ' + user.lastName : ''}`
-    : user?.emailAddresses?.[0]?.emailAddress?.split('@')?.[0] || 'Learner';
+    ? `${user.firstName}${user.lastName ? " " + user.lastName : ""}`
+    : user?.emailAddresses?.[0]?.emailAddress?.split("@")?.[0] || "Learner"
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Hello, {displayName}! 👋</h1>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Hello, {displayName}! 👋
+        </h1>
         <p className="text-muted-foreground">
-          Welcome back to your learning dashboard. Ready to generate a new course?
+          Welcome back to your learning dashboard. Ready to generate a new
+          course?
         </p>
       </div>
 
@@ -58,16 +61,16 @@ export default async function DashboardPage() {
           </div>
           <h2 className="text-xl font-semibold">Generate your first course</h2>
           <p className="text-muted-foreground">
-            Enter any topic and our AI will create a complete, structured learning path with chapters, lessons, and interactive flashcards.
+            Enter any topic and our AI will create a complete, structured
+            learning path with chapters, lessons, and interactive flashcards.
           </p>
           <a
             href="/dashboard/generate"
-            className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
-          >
+            className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90">
             Start Learning →
           </a>
         </div>
       </div>
     </div>
-  );
+  )
 }

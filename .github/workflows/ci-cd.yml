@@ -7,6 +7,7 @@ on:
       - develop
     paths:
       - ".github/workflows/ci-cd.yml"
+      - "docker-bake.hcl"
       - "client/**"
       - "server/**"
       - "compose.prod.yaml"
@@ -18,6 +19,7 @@ on:
       - "v*"
     paths:
       - ".github/workflows/ci-cd.yml"
+      - "docker-bake.hcl"
       - "client/**"
       - "server/**"
       - "compose.prod.yaml"
@@ -30,68 +32,65 @@ concurrency:
   group: ci-cd-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAMESPACE: ghcr.io/${{ github.repository }}
-
 jobs:
   publish-images:
-    name: Build Docker images
+    name: Build and publish Docker images
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
+      actions: write
       contents: read
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - service: client
-            context: ./client
-            target: production
-          - service: server
-            context: ./server
-            target: production
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
-      - name: Login to GHCR
+      - name: Resolve image version
+        id: version
+        shell: bash
+        env:
+          DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+        run: |
+          if [[ -z "$DOCKERHUB_USERNAME" ]]; then
+            echo "Repository variable DOCKERHUB_USERNAME is required." >&2
+            exit 1
+          fi
+          namespace="${DOCKERHUB_USERNAME,,}"
+          echo "namespace=$namespace" >> "$GITHUB_OUTPUT"
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+            echo "tag=$GITHUB_REF_NAME" >> "$GITHUB_OUTPUT"
+            echo "channel=release-${GITHUB_SHA:0:7}" >> "$GITHUB_OUTPUT"
+          elif [[ "$GITHUB_REF" == refs/heads/main ]]; then
+            echo "tag=latest" >> "$GITHUB_OUTPUT"
+            echo "channel=latest" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=sha-${GITHUB_SHA:0:7}" >> "$GITHUB_OUTPUT"
+            echo "channel=local" >> "$GITHUB_OUTPUT"
+          fi
+          echo "sha=${GITHUB_SHA:0:7}" >> "$GITHUB_OUTPUT"
+
+      - name: Login to Docker Hub
         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Docker metadata
-        id: meta
-        uses: docker/metadata-action@v5
+      - name: Build and publish images with Bake
+        uses: docker/bake-action@v7
         with:
-          images: ${{ env.IMAGE_NAMESPACE }}/${{ matrix.service }}
-          tags: |
-            type=ref,event=branch
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
-            type=sha,prefix=sha-,format=short
-            type=raw,value=latest,enable={{is_default_branch}}
-          labels: |
-            org.opencontainers.image.title=Edemy ${{ matrix.service }}
-            org.opencontainers.image.vendor=Edemy
-
-      - name: Build and push image
-        uses: docker/build-push-action@v6
-        with:
-          context: ${{ matrix.context }}
-          file: ${{ matrix.context }}/Dockerfile
-          target: ${{ matrix.target }}
+          source: .
+          files: ./docker-bake.hcl
+          targets: default
           push: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v')) }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha,scope=${{ matrix.service }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
-          provenance: mode=max
+          provenance: true
           sbom: true
+          pull: true
+          vars: |
+            IMAGE_NAMESPACE=${{ steps.version.outputs.namespace }}
+            IMAGE_TAG=${{ steps.version.outputs.tag }}
+            IMAGE_SHA=sha-${{ steps.version.outputs.sha }}
+            IMAGE_CHANNEL=${{ steps.version.outputs.channel }}
+            GIT_SHA=${{ github.sha }}

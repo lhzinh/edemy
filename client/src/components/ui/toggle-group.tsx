@@ -45,11 +45,9 @@ function ToggleGroup({
         "group/toggle-group flex w-fit flex-row items-center gap-[--spacing(var(--gap))] rounded-md data-[spacing=0]:data-[variant=outline]:shadow-xs data-vertical:flex-col data-vertical:items-stretch",
         className
       )}
-      {...props}
-    >
+      {...props}>
       <ToggleGroupContext.Provider
-        value={{ variant, size, spacing, orientation }}
-      >
+        value={{ variant, size, spacing, orientation }}>
         {children}
       </ToggleGroupContext.Provider>
     </ToggleGroupPrimitive>
@@ -79,8 +77,7 @@ function ToggleGroupItem({
         }),
         className
       )}
-      {...props}
-    >
+      {...props}>
       {children}
     </TogglePrimitive>
   )

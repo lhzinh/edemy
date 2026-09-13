@@ -1,4 +1,4 @@
-import type { SVGProps } from "react";
+import type { SVGProps } from "react"
 
 const Learnthis = (props: SVGProps<SVGSVGElement>) => (
   <svg {...props} viewBox="0 0 45 45" xmlSpace="preserve">
@@ -15,6 +15,6 @@ const Learnthis = (props: SVGProps<SVGSVGElement>) => (
       fill="#4fbcf7"
     />
   </svg>
-);
+)
 
-export { Learnthis };
+export { Learnthis }

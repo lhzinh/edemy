@@ -103,12 +103,10 @@ function MessageScrollerButton({
         className
       )}
       render={render ?? <Button variant={variant} size={size} />}
-      {...props}
-    >
+      {...props}>
       {children ?? (
         <>
-          <ArrowDownIcon
-          />
+          <ArrowDownIcon />
           <span className="sr-only">
             {direction === "end" ? "Scroll to end" : "Scroll to start"}
           </span>

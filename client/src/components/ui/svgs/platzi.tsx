@@ -1,4 +1,4 @@
-import type { SVGProps } from "react";
+import type { SVGProps } from "react"
 
 const Platzi = (props: SVGProps<SVGSVGElement>) => (
   <svg {...props} style={{ color: "#98ca3f" }} viewBox="0 0 24 24">
@@ -7,6 +7,6 @@ const Platzi = (props: SVGProps<SVGSVGElement>) => (
       fill="#98ca3f"
     />
   </svg>
-);
+)
 
-export { Platzi };
+export { Platzi }
