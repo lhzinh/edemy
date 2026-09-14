@@ -1,9 +1,9 @@
 "use client"
 
-import { createContext, useState, useEffect } from 'react'
-import { useAuth } from '@clerk/nextjs'
-import axios from '@/lib/axios'
-import { User } from '@/types/types'
+import { createContext, useState, useEffect } from "react"
+import { useAuth } from "@clerk/nextjs"
+import axios from "@/lib/axios"
+import { User } from "@/types/types"
 
 interface AuthContextType {
   user: User | null
@@ -18,26 +18,26 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const { getToken } = useAuth();
+  const { getToken } = useAuth()
 
   useEffect(() => {
     // Used to check the session status with the server
-  const checkAuth = async () => {
-    try {
-      const token = await getToken()
-      if (token) {
-        axios.defaults.headers.Authorization = `Bearer ${token}`
-        const { data: user } = await axios.get('/users/current-user/')
-        if (user) setUser(user)
+    const checkAuth = async () => {
+      try {
+        const token = await getToken()
+        if (token) {
+          axios.defaults.headers.Authorization = `Bearer ${token}`
+          const { data: user } = await axios.get("/users/current-user/")
+          if (user) setUser(user)
+        }
+        setIsLoading(false)
+      } catch (error) {
+        console.error("Failed to check auth status:", error)
+        setUser(null)
+      } finally {
+        setIsLoading(false)
       }
-      setIsLoading(false)
-    } catch (error) {
-      console.error('Failed to check auth status:', error)
-      setUser(null)
-    } finally {
-      setIsLoading(false)
     }
-  }
 
     checkAuth()
   }, [getToken])

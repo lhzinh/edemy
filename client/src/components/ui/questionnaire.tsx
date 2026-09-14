@@ -110,8 +110,7 @@ function QuestionnaireChoice({
         "data-disabled:pointer-events-none data-disabled:cursor-not-allowed data-disabled:opacity-50",
         className
       )}
-      {...props}
-    >
+      {...props}>
       <QuestionnairePrimitive.ChoiceInput
         data-slot="questionnaire-choice-input"
         className="absolute inset-0 z-10 size-full cursor-pointer opacity-0"
@@ -119,18 +118,19 @@ function QuestionnaireChoice({
       <span
         aria-hidden="true"
         data-slot="questionnaire-choice-indicator"
-        className="pointer-events-none relative flex size-4 shrink-0 translate-y-[--spacing(0.45)] items-center justify-center rounded-[4px] border border-input group-has-data-[slot=questionnaire-choice-description]/questionnaire-choice:translate-y-0.5 group-data-[type=radio]/questionnaire-choice:rounded-full group-data-checked/questionnaire-choice:border-primary group-data-checked/questionnaire-choice:bg-primary group-data-checked/questionnaire-choice:text-primary-foreground dark:bg-input/30 dark:group-data-checked/questionnaire-choice:bg-primary"
-      >
+        className="pointer-events-none relative flex size-4 shrink-0 translate-y-[--spacing(0.45)] items-center justify-center rounded-[4px] border border-input group-has-data-[slot=questionnaire-choice-description]/questionnaire-choice:translate-y-0.5 group-data-[type=radio]/questionnaire-choice:rounded-full group-data-checked/questionnaire-choice:border-primary group-data-checked/questionnaire-choice:bg-primary group-data-checked/questionnaire-choice:text-primary-foreground dark:bg-input/30 dark:group-data-checked/questionnaire-choice:bg-primary">
         <span
           data-slot="questionnaire-choice-indicator-dot"
           className="hidden size-2 rounded-full bg-primary-foreground group-data-[type=checkbox]/questionnaire-choice:hidden group-data-checked/questionnaire-choice:block"
         />
-        <CheckIcon data-slot="questionnaire-choice-indicator-check" className="hidden size-3.5 group-data-[type=radio]/questionnaire-choice:hidden group-data-checked/questionnaire-choice:block" />
+        <CheckIcon
+          data-slot="questionnaire-choice-indicator-check"
+          className="hidden size-3.5 group-data-[type=radio]/questionnaire-choice:hidden group-data-checked/questionnaire-choice:block"
+        />
       </span>
       <QuestionnairePrimitive.ChoiceLabel
         data-slot="questionnaire-choice-label"
-        className="flex min-w-0 flex-1 flex-col gap-1 leading-snug"
-      >
+        className="flex min-w-0 flex-1 flex-col gap-1 leading-snug">
         {children}
       </QuestionnairePrimitive.ChoiceLabel>
       <QuestionnairePrimitive.ChoiceShortcut
@@ -161,8 +161,7 @@ function QuestionnaireInput({
   return (
     <div
       data-slot="questionnaire-input-wrapper"
-      className="group/questionnaire-input relative w-full min-w-0"
-    >
+      className="group/questionnaire-input relative w-full min-w-0">
       <QuestionnairePrimitive.Input
         data-slot="questionnaire-input"
         className={cn(
@@ -223,8 +222,7 @@ function QuestionnairePrevious({
         "col-start-1 row-start-1 min-h-11 justify-self-start sm:min-h-0",
         className
       )}
-      {...props}
-    >
+      {...props}>
       {children ?? "Previous"}
     </QuestionnairePrimitive.Previous>
   )
@@ -248,8 +246,7 @@ function QuestionnaireSkip({
         "col-start-2 row-start-1 min-h-11 justify-self-end sm:min-h-0",
         className
       )}
-      {...props}
-    >
+      {...props}>
       {children ?? "Skip"}
     </QuestionnairePrimitive.Skip>
   )
@@ -273,8 +270,7 @@ function QuestionnaireNext({
         "col-start-3 row-start-1 min-h-11 justify-self-end sm:min-h-0",
         className
       )}
-      {...props}
-    >
+      {...props}>
       {children ?? "Next"}
     </QuestionnairePrimitive.Next>
   )
@@ -298,8 +294,7 @@ function QuestionnaireSubmit({
         "col-start-3 row-start-1 min-h-11 justify-self-end sm:min-h-0",
         className
       )}
-      {...props}
-    >
+      {...props}>
       {children ?? "Submit"}
     </QuestionnairePrimitive.Submit>
   )

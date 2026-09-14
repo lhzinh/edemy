@@ -1,5 +1,6 @@
 services:
   server:
+    image: ${IMAGE_NAMESPACE:-dockeruser}/edemy-server:${IMAGE_TAG:-latest}
     build:
       context: ./server
       dockerfile: Dockerfile
@@ -12,10 +13,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '2'
+          cpus: "2"
           memory: 512M
 
   client:
+    image: ${IMAGE_NAMESPACE:-dockeruser}/edemy-client:${IMAGE_TAG:-latest}
     build:
       context: ./client
       dockerfile: Dockerfile
@@ -35,4 +37,3 @@ services:
     depends_on:
       - server
       - client
-

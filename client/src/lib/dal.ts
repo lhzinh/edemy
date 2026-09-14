@@ -1,5 +1,5 @@
-import { auth } from '@clerk/nextjs/server'
-import { cache } from 'react'
+import { auth } from "@clerk/nextjs/server"
+import { cache } from "react"
 
 export const getSession = cache(async () => {
   const { isAuthenticated, orgId, userId } = await auth()
@@ -12,7 +12,7 @@ export const getSession = cache(async () => {
 export async function requireUser() {
   const session = await getSession()
 
-  if (!session) throw new Error('Unauthorized')
+  if (!session) throw new Error("Unauthorized")
 
   return session
 }

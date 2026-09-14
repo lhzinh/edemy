@@ -10,7 +10,6 @@ An AI-first e-learning SaaS (Software as a Service) platform builds artificial i
 - Vitest for tests
 - Zod is the safe choice for TypeScript validation. It has the largest ecosystem, most tutorials, and integrates with everything. React Hook Form and Zod works with all of them.
 
-
 ## Commands
 
 Dev server: `bun run dev`
@@ -30,7 +29,7 @@ Deploy: `bun run deploy:staging`
 
 // Component pattern:
 export const UserCard = ({ name, email }: UserCardProps) => {
-  return <div className="p-4">{name}</div>;
+return <div className="p-4">{name}</div>;
 };
 
 ## Error Handling
@@ -48,33 +47,34 @@ Never expose internal system details, stack traces, or secrets in user-facing er
 ## Architecture
 
 /src
-    /app         -> Routes and page components
-    /components  -> Shared UI components
-    /lib         -> Business logic and utilities
+/app -> Routes and page components
+/components -> Shared UI components
+/lib -> Business logic and utilities
 
 Never import from `/app` into `/lib`. Data flows one direction.
-
 
 ## Boundaries
 
 ### ALWAYS
+
 - Run `bun run lint --fix`, `bun run build`, and `bun x tsc --noEmit` to verify code correctness before completing any task.
 - Generate comprehensive Vitest unit tests (including negative test cases to ensure safe failure states) for any new business logic.
 - Ensure all configurations follow least-privilege principles and secure defaults (e.g., HTTPS, secure cookies).
 - Always use TDD (Test Driven Development) principles. Write tests before writing code.
 
 ### ASK FIRST
+
 - Before installing any new third-party dependency (never use obscure packages; prefer Bun's built-in APIs or community-trusted libraries to avoid slopsquatting/hallucinated dependencies).
 - Before making any database schema migrations (propose a written schema migration plan with rollback steps first).
 - Before modifying public API endpoints or core shared utility functions.
 
 ### NEVER
+
 - Never modify files in `/generated/`.
 - Never commit `.env` files, API keys, credentials, or plaintext secrets. Use secure environment variables.
 - Never use the `any` type in TypeScript.
 - Never write placeholder code or unresolved `TODO` comments without flagging them for security review.
 - The `/legacy/` module uses sync patterns. Do not convert to async.
-
 
 ## Git
 

@@ -1,123 +1,175 @@
 # Edemy
 
-AI-first e-learning SaaS platform. Three-service architecture: Next.js frontend, Django REST backend, Expo mobile app. Clerk for auth, Inngest for background jobs, PostgreSQL for data.
+AI-first e-learning SaaS platform. The monorepo contains a Next.js frontend,
+Django REST backend, Expo mobile app, and Hardhat web3 app.
 
-## Agent skills
+## AI Coding Workflow
 
-### Issue tracker
+Follow this sequence for every implementation task:
 
-Issues and specs live in GitHub Issues, managed with the `gh` CLI. See `docs/agents/issue-tracker.md`.
+1. **Specify (SPD)**: Restate the requested behavior, identify the affected
+   service and owning abstraction, and define acceptance criteria.
+2. **Generate Code**: Read the nearest implementation, tests, and local
+   instructions before editing. Prefer the smallest focused change.
+3. **TDD**: Add or update a focused failing test first when the behavior is
+   testable. Implement the change, then make the test pass. Cover negative and
+   boundary cases for validation, permissions, errors, and empty states.
+4. **BDD**: Describe user-visible and API behavior as Given/When/Then scenarios.
+   Turn important scenarios into automated tests where practical.
+5. **Lint and Format**: Run the local pre-push checks before pushing. Fix the
+   source; do not disable rules globally to hide failures.
+6. **CI**: Push only after local checks pass. GitHub Actions builds production
+   Docker images and publishes them to GHCR on `main` or `v*` tags.
+7. **Fix / Finalize**: Reproduce CI failures locally, fix the root cause, rerun
+   the failing check, and repeat until all required gates pass. Report changed
+   files, validation results, and remaining pre-existing failures.
 
-### Triage labels
+### Definition of Done
 
-Use the canonical labels `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, and `wontfix`. See `docs/agents/triage-labels.md`.
+- Acceptance criteria and relevant Given/When/Then scenarios are covered.
+- Tests were written or updated before implementation when behavior changed.
+- No secrets, generated artifacts, unrelated refactors, or placeholder TODOs
+  were introduced.
+- Local pre-push checks pass.
+- Relevant typecheck, unit, integration, build, and migration checks pass.
+- Production Docker images build successfully when deployment behavior changes.
+- The final response lists validation commands and known residual risks.
 
-### Domain docs
+### Failure Handling
 
-This is a single-context repo with root `CONTEXT.md` and `docs/adr/` documentation. See `docs/agents/domain.md`.
+- Read the complete error and identify the owning layer before editing.
+- Preserve user changes in a dirty worktree; never reset or checkout unrelated
+  files.
+- Do not weaken tests, permissions, security settings, or lint rules to pass a
+  gate.
+- After each fix, rerun the narrowest failing command, then the full required
+  verification order.
 
 ## Monorepo Layout
 
-```
-/client   → Next.js 16 (App Router), React 19, Bun, Clerk auth
-/server   → Django 6.1, DRF, Python 3.14, uv, PostgreSQL
-/mobile   → Expo SDK 57, React Native 0.86
+```text
+/client   -> Next.js 16, App Router, React 19, Bun, Clerk
+/server   -> Django 6.1, DRF, Python 3.14, uv, PostgreSQL
+/mobile   -> Expo SDK 57, React Native 0.86
+/web3     -> Hardhat 3, blockchain NFT and token apps
 ```
 
-Each sub-project has its own `AGENTS.md` with detailed conventions — read the relevant one before editing code there.
+Read the relevant sub-project `AGENTS.md` before editing code there.
 
 ## Infrastructure
 
-- **Docker Compose** (`compose.yaml`) orchestrates all services
-- **Inngest dev server** runs on ports 8288/8289, connects to Django at `http://server:8000/api/inngest`
-- **Clerk** handles auth end-to-end: frontend uses `@clerk/nextjs`, backend uses `clerk-backend-api` for JWT verification and webhook sync
-- Server secrets stored in `server/deploy/SECRET` (auto-generated if missing)
+- Docker Compose (`compose.yaml`) orchestrates local services.
+- Inngest runs on ports 8288/8289 and connects to Django at
+  `http://server:8000/api/inngest`.
+- Clerk handles frontend auth, backend JWT verification, and webhook sync.
+- Never commit secrets. Server secrets are loaded from environment files or
+  `server/deploy/SECRET`.
 
-## Commands (Root Level)
+## Commands
 
-All commands run through Docker Compose via `make`:
+### Root
 
 ```bash
 make up              # Start all services
 make down            # Stop all services
-make watch           # Watch + hot reload (compose watch)
+make watch           # Watch and hot reload
 make build           # Rebuild all images
-make lint            # Lint backend (ruff) + frontend (eslint)
+make lint            # Lint backend and frontend through Compose
 make test            # Run server pytest
 make test-e2e        # Run Playwright E2E tests
 make migrate         # Apply Django migrations
-make makemigrations  # Generate new migrations
-make shell           # Django shell
+make makemigrations  # Generate Django migrations
+make shell           # Open Django shell
 make logs            # View server logs
+make setup-hooks     # Enable the tracked Git pre-push hook
 ```
 
-## Commands (Per Service)
+Run `make setup-hooks` once after cloning. The tracked `.githooks/pre-push`
+script runs client ESLint and server Ruff checks before every push.
 
-**Client** (`/client`):
+### Client
+
 ```bash
-bun run dev          # Dev server
-bun run build        # Production build
-bun test             # Vitest
-bun run lint --fix   # ESLint
-bun x tsc --noEmit   # Typecheck
+cd client
+bun run dev
+bun run lint
+bun run lint --fix
+bun x tsc --noEmit
+bun run test
+bun run build
 ```
 
-**Server** (`/server`):
+### Server
+
 ```bash
+cd server
 uv run python manage.py runserver
-uv run pytest
 uv run ruff check . --fix
 uv run ruff format
+uv run ruff format --check
 uv run pyright
+uv run pytest
 ```
 
-**Mobile** (`/mobile`):
+### Mobile
+
 ```bash
+cd mobile
 npx expo start
 npx expo lint
 npx tsc --noEmit
 ```
 
-## Server Architecture
-
-- **Django apps**: `accounts`, `courses` (in `server/apps/`)
-- **Settings split**: `core/settings/base.py`, `local.py`, `testing.py`, `production.py`
-- **Testing**: SQLite in-memory, migrations disabled (`--nomigrations`, `--reuse-db`), coverage of `apps/`, MD5 password hasher. Settings module is `core.settings.testing` (set in `pytest.ini`)
-- **Service/Selector pattern**: Business logic in `services.py`/`selectors.py`, not in views or serializers
-- **Shared code**: `server/libs/mixins/` holds cross-app model/permission/serializer mixins (e.g. `TimestampMixin`, `IsActiveMixin`, `SlugMixin`)
-- **Inngest**: client defined in `core/client.py` (`inngest_client`); background functions (`server/apps/*/tasks.py`) registered via `inngest.django.serve()` in `apps/urls.py`. Inngest handler logic is split into pure `_handle_*` functions so it's unit-testable without the SDK
-- **API versioning**: URL-path based (`/v1/`, `/v2/`), default v1
-- **Auth flow**: Clerk JWT verified via `accounts.auth.ClerkAuthentication`, user synced to DB via Inngest on `clerk/user.*` events
-- **Gotcha**: `apps/urls.py` imports `clerk_webhook` from `accounts.webhooks`, but that file is not yet present — importing the URLconf currently breaks. Don't assume it exists.
-
-## Client Architecture
-
-- **Route groups**: `(auth)` for sign-in/sign-up, `(dashboard)` for protected routes
-- **Providers**: Clerk → React Query → ThemeProvider (composed in `src/providers/index.tsx`)
-- **Auth guard**: Dashboard layout checks `auth()` and redirects to `/sign-in` if unauthenticated
-- **Component library**: shadcn/ui components in `src/components/ui/`
-- **React Compiler**: Enabled in `next.config.ts` (`reactCompiler: true`)
-- **Path aliases**: `@/*` maps to `./src/*`
-- **Build output**: `output: "standalone"` in `next.config.ts`; client container uses `network_mode: "host"` in `compose.yaml`
-
 ## Verification Order
 
-Always run in this order before completing a task:
+Run the narrowest relevant check first, then use the complete order:
 
-**Client**: `bun run lint --fix` → `bun x tsc --noEmit` → `bun run build`
-**Server**: `uv run ruff check . --fix` → `uv run ruff format` → `uv run pyright` → `uv run pytest`
+**Client**: `bun run lint --fix` -> `bun x tsc --noEmit` -> `bun run test` -> `bun run build`
 
-## Key Conventions
+**Server**: `uv run ruff check . --fix` -> `uv run ruff format` -> `uv run pyright` -> `uv run pytest`
 
-- **Git**: Squash merge only. Conventional commits (`feat:`, `fix:`, `chore:`, `docs:`). Branch format: `type/short-description`. Create commits with `gitmoji -c`.
-- **Server Python**: 3.14+, type hints required, no `Any` types, prefer CBVs and DRF ViewSets, early returns over nesting
-- **Client TypeScript**: Functional components only, named exports only, `const` over `let`/`var`, Zod for validation
-- **Expo**: Never create `ios/` or `android/` dirs by hand. Use `npx expo install` not npm/bun for packages.
-- **Migrations**: Always propose written schema changes and rollback strategy before executing
-- **Dependencies**: Ask before installing new third-party packages (prefer built-in APIs)
+**Pre-push**: `make setup-hooks` once, then `.githooks/pre-push`
 
-## Sub-project Detail Files
+**Docker**: `docker compose -f compose.prod.yaml config --quiet` and
+`docker compose -f compose.prod.yaml build`
 
-- `client/AGENTS.md` — Client code style, error handling, security rules, Next.js 16 specifics
-- `server/AGENTS.md` — Server code style, DRF patterns, security, migration policy
-- `mobile/AGENTS.md` — Expo conventions, EAS build, native generation rules
+## Architecture Notes
+
+- Django apps live in `server/apps/`; business logic belongs in
+  `services.py` and `selectors.py`, not views or serializers.
+- Shared server mixins live in `server/libs/mixins/`.
+- Django settings are split into `base.py`, `local.py`, `testing.py`, and
+  `production.py`.
+- Tests use SQLite in-memory databases, disabled migrations, and
+  `core.settings.testing` from `pytest.ini`.
+- Inngest handlers should keep pure `_handle_*` functions testable without the
+  SDK.
+- API versioning is URL-path based (`/v1/`, `/v2/`), with v1 as default.
+- Client route groups are `(auth)` and `(dashboard)`.
+- Client providers are Clerk, React Query, and ThemeProvider.
+- Client path alias `@/*` maps to `./src/*`; standalone output is enabled.
+- The existing `apps/urls.py` import of `accounts.webhooks.clerk_webhook` may
+  be unavailable; verify before assuming URL imports work.
+
+## Conventions
+
+- Use squash merges and Conventional Commits: `feat:`, `fix:`, `chore:`,
+  `docs:`. Branches use `type/short-description`.
+- Python requires type hints, no `Any`, early returns, and explicit DRF
+  permissions.
+- TypeScript uses functional components, named exports, `const`, and Zod for
+  validation.
+- Do not create `ios/` or `android/` directories manually for Expo.
+- Propose schema changes and rollback steps before creating or executing Django
+  migrations.
+- Ask before installing third-party dependencies; prefer existing or built-in
+  tools.
+- Update documentation, API contracts, and runbooks when behavior,
+  configuration, or deployment changes.
+
+## Sub-project Instructions
+
+- `client/AGENTS.md` - Client style, security, error handling, and Next.js rules
+- `server/AGENTS.md` - Server style, DRF patterns, security, and migrations
+- `mobile/AGENTS.md` - Expo conventions and EAS build rules
+- `web3/AGENTS.md` - Blockchain, NFT, and dapp conventions
