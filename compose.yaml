@@ -1,0 +1,51 @@
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile
+      target: development
+    ports:
+      - 8000:8000
+    env_file:
+      - ./server/.env
+    develop:
+      watch:
+        # Sync source file changes directly into the container so Django's
+        # dev server can reload them without a full image rebuild.
+        - action: sync
+          path: ./server
+          target: /app
+          ignore:
+            - __pycache__/
+            - "*.pyc"
+            - .git/
+            - .venv/
+        # Rebuild the image when dependencies change.
+        - action: rebuild
+          path: ./server/pyproject.toml
+        - action: rebuild
+          path: ./server/uv.lock
+
+
+  client:
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile
+      target: development
+    ports:
+      - 3000:3000
+    env_file:
+      - ./client/.env
+    environment:
+      - WATCHPACK_POLLING=true
+    develop:
+      watch:
+        - action: sync
+          path: ./client
+          target: /app
+          initial_sync: true
+          ignore:
+            - node_modules/
+            - .next/
+        - action: rebuild
+          path: ./client/package.json

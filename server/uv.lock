@@ -562,15 +562,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pywatchman"
-version = "4.0.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/38/71/343c1ecc70bf32726c33c1cdcb999f27e27bc1d181118bcdafaf360b767a/pywatchman-4.0.0.tar.gz", hash = "sha256:2dea10710160c6f6bcd220c49a27895234897cfdec62c5b1098f6a0ee4edd79a", size = 40906, upload-time = "2026-06-12T17:00:35.871Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/44/84/60760fc16a50dda2890b8a8d6440e38a39da0a6d4780979d1302930adaba/pywatchman-4.0.0-cp314-cp314-macosx_11_0_arm64.whl", hash = "sha256:45866688d3372f68b9a60fd38cee657fb30906f1110aa266cb82d3b0afaa1b1c", size = 52583, upload-time = "2026-06-12T17:00:33.282Z" },
-]
-
-[[package]]
 name = "ruff"
 version = "0.16.9"
 source = { registry = "https://pypi.org/simple" }
@@ -615,7 +606,6 @@ dev = [
     { name = "pytest-cov" },
     { name = "pytest-django" },
     { name = "pytest-factoryboy" },
-    { name = "pywatchman" },
     { name = "ruff" },
 ]
 
@@ -636,7 +626,6 @@ dev = [
     { name = "pytest-cov", specifier = ">=7.1.0" },
     { name = "pytest-django", specifier = ">=4.14.0" },
     { name = "pytest-factoryboy", specifier = ">=2.8.1" },
-    { name = "pywatchman", specifier = ">=4.0.0" },
     { name = "ruff", specifier = ">=0.16.9" },
 ]
 
