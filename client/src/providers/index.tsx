@@ -38,11 +38,6 @@ const Providers = buildProvidersTree([
     ClerkProvider,
     {
       appearance: { cssLayerName: 'clerk' },
-      afterSignOutUrl: '/sign-in',
-      signInForceRedirectUrl: '/dashboard',
-      signUpForceRedirectUrl: '/dashboard',
-      signInUrl: '/sign-in',
-      signUpUrl: '/sign-up',
     },
   ],
   [

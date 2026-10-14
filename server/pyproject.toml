@@ -5,14 +5,25 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "clerk-backend-api>=7.0.0",
     "dj-database-url>=3.1.2",
     "django>=6.1.1",
+    "django-cloudinary-storage>=0.3.0",
+    "django-cors-headers>=4.9.0",
+    "djangorestframework>=3.18.1",
+    "gunicorn>=26.2.0",
+    "inngest>=0.5.19",
+    "markdown>=3.11",
+    "pillow>=12.3.0",
     "psycopg[binary]>=3.3.6",
     "python-dotenv>=1.2.4",
+    "uvicorn>=0.54.0",
 ]
 
 [dependency-groups]
 dev = [
+    "django-debug-toolbar>=8.0.0",
+    "django-silk>=5.6.0",
     "django-stubs[compatible-mypy]>=6.1.1",
     "djangorestframework-stubs>=3.18.1",
     "pyrefly>=1.3.2",
@@ -54,6 +65,7 @@ project-excludes = [
 [tool.pyrefly.errors]
 missing-attribute = false
 bad-override = false
+missing-import = false
 
 [mypy]
 plugins = "mypy_drf_plugin.main"
@@ -64,3 +76,18 @@ plugins = ["mypy_django_plugin.main"]
 
 [tool.django-stubs]
 django_settings_module = "config.settings"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+python_files = ["test_*.py", "*_tests.py"]
+addopts = "--maxfail=1 -p no:warnings --no-migrations --reuse-db"
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+source = "."
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 80

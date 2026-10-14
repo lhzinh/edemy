@@ -33,6 +33,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG")
 
+TESTING = "test" in sys.argv or "PYTEST_VERSION" in os.environ
+
 
 # Application definition
 
@@ -43,13 +45,30 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "cloudinary_storage",
+    "cloudinary",
+    "rest_framework",
+    "corsheaders",
     "accounts.apps.AccountsConfig",
     "posts.apps.PostsConfig",
 ]
 
+# Django REST framework
+# https://www.django-rest-framework.org/#installation
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "accounts.auth.ClerkAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
+    ],
+}
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -82,13 +101,11 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": dj_database_url.config(
-        default=os.getenv("DATABASE_URL"),
-        conn_max_age=600, 
-        disable_server_side_cursors=True,
-        conn_health_checks=True
+        default=os.getenv("DATABASE_URL"), conn_max_age=600, conn_health_checks=True
     )
 }
 
+DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
 
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
@@ -96,9 +113,15 @@ DATABASES = {
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "OPTIONS": {
+            "user_attributes": ["email", "username", "first_name", "last_name"],
+        },
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {
+            "min_length": 12,
+        },
     },
     {
         "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
@@ -107,6 +130,12 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+
+# Cross-Origin Resource Sharing - CORS
+# https://pypi.org/project/django-cors-headers/
+
+CORS_ALLOW_CREDENTIALS = True
 
 
 # Internationalization
@@ -126,6 +155,17 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+STATIC_ROOT = os.path.join(BASE_DIR.parent, "staticfiles")
+
+MEDIA_URL = "/media/"
+
+STORAGES = {
+    "default": {"BACKEND": "cloudinary_storage.storage.RawMediaCloudinaryStorage"},
+    "staticfiles": {
+        "BACKEND": "cloudinary_storage.storage.StaticHashedCloudinaryStorage"
+    },
+}
+
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
@@ -141,3 +181,25 @@ MAILERS = {
 # https://docs.djangoproject.com/en/6.0/topics/auth/customizing/#substituting-a-custom-user-model
 
 AUTH_USER_MODEL = "accounts.User"
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",  # Default backend
+]
+
+
+# Clerk
+# https://clerk.com/articles/how-to-add-authentication-to-a-python-backend
+
+CLERK_SECRET_KEY = os.getenv("CLERK_SECRET_KEY")
+CLERK_JWT_KEY = os.getenv("CLERK_JWT_KEY")
+CLERK_AUTHORIZED_PARTIES = os.getenv("CLERK_AUTHORIZED_PARTIES")
+
+
+# Cloudinary
+# https://github.com/klis87/django-cloudinary-storage
+
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": os.getenv("CLOUD_NAME"),
+    "API_KEY": os.getenv("CLOUD_API_KEY"),
+    "API_SECRET": os.getenv("CLOUD_API_SECRET"),
+}

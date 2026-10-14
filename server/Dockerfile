@@ -34,8 +34,7 @@ ENV PATH="/app/.venv/bin:$PATH"
 COPY . .
 EXPOSE 8000
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-
+CMD ["uvicorn", "config.asgi:application", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
 # The production stage uses the minimal runtime image, which has no shell,
 # no package manager, and already runs as the nonroot user.
@@ -60,4 +59,4 @@ RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /
 USER appuser
 
 # Run Gunicorn as the production WSGI server.
-CMD ["gunicorn", "myapp.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "config.asgi:application", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "--workers", "4"]
