@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "accounts.apps.AccountsConfig",
     "posts.apps.PostsConfig",
+    "courses.apps.CoursesConfig",
 ]
 
 # Django REST framework
