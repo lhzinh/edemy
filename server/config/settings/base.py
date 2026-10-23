@@ -39,7 +39,7 @@ TESTING = "test" in sys.argv or "PYTEST_VERSION" in os.environ
 # Application definition
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
+    "config.apps.AdminConfig",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -47,8 +47,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "cloudinary_storage",
     "cloudinary",
+    "chartjs",
     "rest_framework",
     "corsheaders",
+    "core.apps.CoreConfig",
     "accounts.apps.AccountsConfig",
     "posts.apps.PostsConfig",
     "courses.apps.CoursesConfig",
@@ -82,7 +84,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [os.path.join(BASE_DIR.parent, "templates")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -155,6 +157,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = "static/"
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR.parent, "static")]
 
 STATIC_ROOT = os.path.join(BASE_DIR.parent, "staticfiles")
 
