@@ -1,7 +1,6 @@
+from bot.tools import model_with_tools, tools_by_name
 from langchain.messages import SystemMessage, ToolMessage
 from langchain_core.runnables import RunnableConfig
-
-from bot.tools import model_with_tools, tools_by_name
 
 
 def llm_call(state: dict):

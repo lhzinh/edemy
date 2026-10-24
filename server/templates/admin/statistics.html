@@ -1,0 +1,25 @@
+{% extends 'admin/base_site.html' %}
+{% load i18n admin_urls %}
+{% load static %}
+{% block extrabody %}
+    {{ block.super }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'admin/js/vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'admin/js/jquery.init.js' %}"></script>
+    <script src="{% static 'js/statistics.js' %}"></script>
+{% endblock extrabody %}
+
+{% block content %}
+<div class="container">
+    <h3>{% translate "Statistics" %}</h3>
+
+    <div class="row">
+        <div class="col-6">
+          <canvas id="myChart" data-chart-url="{% url 'line_chart_json' %}"></canvas>
+        </div>
+        <div class="col-6">
+          {% comment %} <canvas id="paymentSuccessChart"></canvas> {% endcomment %}
+        </div>
+    </div>
+</div>
+{% endblock %}

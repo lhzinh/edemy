@@ -1,8 +1,7 @@
-from langchain_core.tools import tool
-from langchain_core.runnables import RunnableConfig
-
 from bot.llms import call_model
 from courses.models import Course
+from langchain_core.runnables import RunnableConfig
+from langchain_core.tools import tool
 
 model = call_model()
 

@@ -6,6 +6,7 @@ from rest_framework import routers, serializers, viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from config.client import inngest_client
+from core.views import LineChartJSONView
 
 User = get_user_model()
 
@@ -32,6 +33,7 @@ router.register(r"users", UserViewSet)
 
 urlpatterns = [
     path("", include(router.urls)),
+    path("chart", LineChartJSONView.as_view(), name="line_chart_json"),
     inngest.django.serve(
         inngest_client,
         [sync_user],

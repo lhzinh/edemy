@@ -1,8 +1,8 @@
 from typing import Literal
-from langgraph.graph import StateGraph, START, END
 
-from bot.states import MessagesState
 from bot.nodes import llm_call, tool_node
+from bot.states import MessagesState
+from langgraph.graph import END, START, StateGraph
 
 
 def should_continue(state: MessagesState) -> Literal["tool_node", END]:
@@ -10,10 +10,10 @@ def should_continue(state: MessagesState) -> Literal["tool_node", END]:
 
     messages = state["messages"]
     last_message = messages[-1]
-    
+
     if last_message.tool_calls:
         return "tool_node"
-    
+
     return END
 
 

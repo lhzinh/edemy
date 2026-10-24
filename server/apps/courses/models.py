@@ -1,12 +1,15 @@
+from accounts.models import User
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
-from accounts.models import User
 
 
 class Course(models.Model):
     creator = models.ForeignKey(
-        User, verbose_name=_("creator"), on_delete=models.CASCADE
+        User,
+        verbose_name=_("creator"),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
     )
     title = models.CharField(_("title"), max_length=120)
     description = models.TextField(_("description"))
