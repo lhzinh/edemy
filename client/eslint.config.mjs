@@ -23,7 +23,12 @@ const eslintConfig = defineConfig([
         'error',
         {
           protected: ['**'],
-          public: ['src/app/page.tsx', 'src/app/(auth)/sign-in/**', 'src/app/(auth)/sign-up/**'],
+          public: [
+            'src/app/page.tsx',
+            'src/app/\\(auth\\)/sign-in/**',
+            'src/app/\\(auth\\)/sign-up/**',
+            'src/app/\\(main\\)/courses/**'
+          ],
         },
       ],
     },

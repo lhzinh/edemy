@@ -17,3 +17,11 @@ class CourseSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = Course
         exclude = ["id", "date_updated", "creator", "changer"]
+
+
+class GenerateCourseSerializer(serializers.Serializer):
+    topic = serializers.CharField(max_length=200)
+    difficulty = serializers.ChoiceField(
+        choices=["Beginner", "Intermediate", "Advanced"],
+        default="Beginner",
+    )

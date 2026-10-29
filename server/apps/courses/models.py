@@ -22,6 +22,7 @@ class Course(AuditMixin, ActiveMixin, GeneratorSEOMixin):
         Category,
         verbose_name=_("list of categories"),
         related_name="%(class)s",
+        blank=True
     )
     title = models.CharField(_("title"), max_length=120)
     description = models.TextField(_("description"))
@@ -41,3 +42,16 @@ class Course(AuditMixin, ActiveMixin, GeneratorSEOMixin):
 
     def __str__(self) -> str:
         return self.title
+
+
+class Module(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="modules")
+    title = models.CharField(max_length=255)
+    order = models.PositiveIntegerField(default=1)
+
+
+class Lesson(models.Model):
+    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name="lessons")
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    order = models.PositiveIntegerField(default=1)
