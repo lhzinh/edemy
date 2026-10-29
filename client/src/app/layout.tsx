@@ -31,10 +31,10 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       suppressHydrationWarning
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
     >
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+      <body className="relative flex flex-col items-center max-md:px-2 pb-20 pt-5" suppressHydrationWarning>
         <Providers>
           <Header />
-          <main>{children}</main>
+          <main className="w-full flex-1">{children}</main>
         </Providers>
       </body>
     </html>

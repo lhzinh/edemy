@@ -1,3 +1,4 @@
+from core.forms import FileImportForm
 from django.contrib import admin
 from django.template.response import TemplateResponse
 from django.urls import path, reverse
@@ -44,5 +45,20 @@ class AdminSite(admin.AdminSite):
                 "summary/statistics/",
                 self.admin_view(self.statistics_view, cacheable=True),
                 name="statistics",
-            )
+            ),
+            path(
+                "import/",
+                self.admin_view(self.import_file, cacheable=True),
+                name="import",
+            ),
         ] + super().get_urls()
+
+    def import_file(self, request):
+        if request.method == "POST":
+            file_source = request.FILES["file_source"]
+            reader = csv.reader(file_source)
+            self.message_user(request, "Your csv file has been imported")
+            return redirect("..")
+        form = FileImportForm()
+        payload = {"form": form}
+        return render(request, "admin/file_form.html", payload)

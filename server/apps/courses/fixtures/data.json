@@ -1,0 +1,65 @@
+[
+    {
+        "model": "courses.category",
+        "pk": 1,
+        "fields": { "name": "Web Development", "slug": "web-development" }
+    },
+    {
+        "model": "courses.category",
+        "pk": 2,
+        "fields": { "name": "Frameworks", "slug": "frameworks" }
+    },
+    {
+        "model": "courses.category",
+        "pk": 3,
+        "fields": {
+            "name": "Languages / Platforms",
+            "slug": "languages-platforms"
+        }
+    },
+
+    {
+        "model": "courses.course",
+        "pk": 1,
+        "fields": {
+            "title": "Python",
+            "slug": "python",
+            "description": "Sample course: Python",
+            "price": "0.000",
+            "categories": [1]
+        }
+    },
+    {
+        "model": "courses.course",
+        "pk": 2,
+        "fields": {
+            "title": "Django",
+            "slug": "django",
+            "description": "Sample course: Django",
+            "price": "0.000",
+            "categories": [1, 2]
+        }
+    },
+    {
+        "model": "courses.course",
+        "pk": 3,
+        "fields": {
+            "title": "JavaScript",
+            "slug": "javascript",
+            "description": "Sample course: JavaScript",
+            "price": "0.000",
+            "categories": [1, 3]
+        }
+    },
+    {
+        "model": "courses.course",
+        "pk": 4,
+        "fields": {
+            "title": "R Programming",
+            "slug": "r-programming",
+            "description": "Sample course: R Programming",
+            "price": "0.000",
+            "categories": [3]
+        }
+    }
+]
