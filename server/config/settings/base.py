@@ -60,8 +60,11 @@ INSTALLED_APPS = [
 # https://www.django-rest-framework.org/#installation
 
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "accounts.auth.ClerkAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
@@ -156,6 +159,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
+STORAGES = {
+    "default": {"BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"},
+    "staticfiles": {
+        "BACKEND": "cloudinary_storage.storage.StaticHashedCloudinaryStorage"
+    },
+}
+
 STATIC_URL = "static/"
 
 STATICFILES_DIRS = [os.path.join(BASE_DIR.parent, "static")]
@@ -163,13 +173,6 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR.parent, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR.parent, "staticfiles")
 
 MEDIA_URL = "/media/"
-
-STORAGES = {
-    "default": {"BACKEND": "cloudinary_storage.storage.RawMediaCloudinaryStorage"},
-    "staticfiles": {
-        "BACKEND": "cloudinary_storage.storage.StaticHashedCloudinaryStorage"
-    },
-}
 
 
 # Email

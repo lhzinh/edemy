@@ -1,4 +1,3 @@
-from django.views.generic import TemplateView
 from chartjs.views.lines import BaseLineChartView
 
 
@@ -22,3 +21,7 @@ class LineChartJSONView(BaseLineChartView):
 
 
 line_chart_json = LineChartJSONView.as_view()
+
+
+class SEOFieldMixin:
+    lookup_field = "slug"

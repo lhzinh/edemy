@@ -1,35 +1,16 @@
 import inngest.django
 from accounts.functions import sync_user
-from django.contrib.auth import get_user_model
+from core.views import LineChartJSONView
+from courses.views import CategoryViewSet, CourseViewSet
+from django.conf import settings
 from django.urls import include, path
-from rest_framework import routers, serializers, viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.routers import DefaultRouter, SimpleRouter
 
 from config.client import inngest_client
-from core.views import LineChartJSONView
 
-User = get_user_model()
-
-
-# Serializers define the API representation.
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ("id", "username", "email", "first_name", "last_name", "avatar")
-
-
-# ViewSets define the view behavior.
-class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.none()
-    serializer_class = UserSerializer
-    permission_classes = (IsAuthenticated,)
-
-    def get_queryset(self):
-        return User.objects.filter(clerk_id=self.request.user.id)
-
-
-router = routers.DefaultRouter()
-router.register(r"users", UserViewSet)
+router = DefaultRouter() if settings.DEBUG else SimpleRouter()
+router.register(r"categories", CategoryViewSet, basename="category")
+router.register(r"courses", CourseViewSet, basename="course")
 
 urlpatterns = [
     path("", include(router.urls)),
