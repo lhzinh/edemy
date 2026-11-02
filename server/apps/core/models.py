@@ -95,19 +95,19 @@ class ActiveMixin(models.Model):
 
 
 class GeneratorSEOMixin(models.Model):
-    slug = models.SlugField(unique=True, db_index=True)
+    slug = models.SlugField(unique=True, db_index=True, blank=True)
 
     class Meta:
         abstract = True
         indexes: ClassVar[list[models.Index]] = [models.Index(fields=["slug"])]
 
-    def generate(self) -> str:
+    def _generate(self) -> str:
         for field_name in ["title", "name", "label"]:
             if hasattr(self, field_name):
                 return str(getattr(self, field_name))
 
     def save(self, *args, **kwargs):
-        base = slugify(self.generate())
+        base = slugify(self._generate())
         if not (self.slug and self.slug.startswith(base)):
             self.slug = base
             temp = self.slug

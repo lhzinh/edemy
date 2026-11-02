@@ -21,7 +21,3 @@ class LineChartJSONView(BaseLineChartView):
 
 
 line_chart_json = LineChartJSONView.as_view()
-
-
-class SEOFieldMixin:
-    lookup_field = "slug"

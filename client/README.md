@@ -1,4 +1,4 @@
-# Client
+# Front-End
 
 ## End-to-end tests
 
@@ -11,3 +11,11 @@ secret keys; `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` is reused as
 
 The suite covers the signed-out dashboard redirect, rejection of an unsigned
 Clerk webhook, and authentication on the Django user API.
+
+## Openapi-typescript
+
+Use version Typescript 5 by CLI:
+
+```bash
+bun add -D typescript@5 # Uninstall version 7.0.2
+```

@@ -3,6 +3,7 @@ from typing import ClassVar
 
 from core.models import ActiveMixin, AuditMixin, GeneratorSEOMixin
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 
@@ -22,6 +23,7 @@ class Course(AuditMixin, ActiveMixin, GeneratorSEOMixin):
         Category,
         verbose_name=_("list of categories"),
         related_name="%(class)s",
+        blank=True,
     )
     title = models.CharField(_("title"), max_length=120)
     description = models.TextField(_("description"))
@@ -38,6 +40,29 @@ class Course(AuditMixin, ActiveMixin, GeneratorSEOMixin):
             models.Index(fields=["is_active", "-date_created"]),
             models.Index(fields=["price"]),
         ]
+        constraints = [
+            models.CheckConstraint(condition=Q(price__gte=0), name="course_price_gte_0")
+        ]
+
+    def __str__(self) -> str:
+        return self.title
+
+
+class Module(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="modules")
+    title = models.CharField(max_length=255)
+    order = models.PositiveIntegerField(default=1)
+
+    def __str__(self) -> str:
+        return f"{self.course.title} / {self.title}"
+
+
+class Lesson(models.Model):
+    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name="lessons")
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    order = models.PositiveIntegerField(default=1)
+    is_preview = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return self.title

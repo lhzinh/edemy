@@ -11,6 +11,7 @@ dependencies = [
     "django-chartjs>=2.3.0",
     "django-cloudinary-storage>=0.3.0",
     "django-cors-headers>=4.9.0",
+    "django-filter>=26.2",
     "django-redis>=7.0.0",
     "djangorestframework>=3.18.1",
     "drf-spectacular[sidecar]>=0.30.0",
