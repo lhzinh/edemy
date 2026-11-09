@@ -50,7 +50,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "corsheaders",
+    "core.apps.CoreConfig",
     "accounts.apps.AccountsConfig",
+    "blog.apps.BlogConfig",
+    "payments.apps.PaymentsConfig",
+    "courses.apps.CoursesConfig",
 ]
 
 MIDDLEWARE = [
