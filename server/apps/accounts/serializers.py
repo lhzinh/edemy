@@ -1,9 +1,8 @@
 from accounts.models import User
-from rest_framework import serializers
+from core.serializers import GeneralSerializer
 
 
-# Serializers define the API representation.
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(GeneralSerializer):
     class Meta:
         model = User
-        fields = ["url", "username", "email", "is_staff"]
+        fields = "__all__"

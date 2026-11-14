@@ -1,15 +1,15 @@
-from core.models import AuditMixin, TimeStampedMixin
+from core.models import AuditMixin, SlugifyMixin, SoftDeleteMixin
 from core.utils import handle_upload
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 
-class Category(TimeStampedMixin, AuditMixin):
-    title = models.CharField(_("title"), unique=True, max_length=80)
+class Category(SlugifyMixin, SoftDeleteMixin, AuditMixin):
+    name = models.CharField(_("title"), unique=True, max_length=80)
 
     def __str__(self):
-        return self.title
+        return self.name
 
 
 class Status(models.TextChoices):
@@ -18,8 +18,8 @@ class Status(models.TextChoices):
     COMING_SOON = "soon", _("Coming Soon")
 
 
-class Course(TimeStampedMixin, AuditMixin):
-    title = models.CharField(_("title"), unique=True, max_length=120)
+class Course(SlugifyMixin, SoftDeleteMixin, AuditMixin):
+    name = models.CharField(_("subject"), unique=True, max_length=120)
     status = models.CharField(
         _("status"), max_length=20, choices=Status.choices, default=Status.DRAFT
     )
@@ -76,7 +76,7 @@ class Course(TimeStampedMixin, AuditMixin):
 
 
 class Module(models.Model):
-    title = models.CharField(_("title"), unique=True, max_length=100)
+    name = models.CharField(_("subject"), unique=True, max_length=100)
     tagline = models.CharField(
         _("tagline"), max_length=50, default="Module tagline here up to 50 chapters"
     )
@@ -89,14 +89,14 @@ class Module(models.Model):
     )
 
     def __str__(self):
-        return self.title
+        return self.name
 
-    def clean(self):
-        self.title = self.title.capitalize()
+    # def clean(self):
+    #     self.title = self.title.capitalize()
 
 
 class Lesson(models.Model):
-    title = models.CharField(max_length=125, unique=True)
+    name = models.CharField(_("subject"), max_length=125, unique=True)
     status = models.CharField(
         _("status"), max_length=20, choices=Status.choices, default=Status.DRAFT
     )
@@ -116,7 +116,7 @@ class Lesson(models.Model):
     )
 
     def __str__(self):
-        return self.title
+        return self.name
 
     # def get_absolute_url(self):
     #     return reverse('courses:view_lesson', args=[str(self.course.slug), str(self.slug)])

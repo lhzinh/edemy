@@ -1,1 +1,9 @@
-# Create your views here.
+from accounts.models import User
+from accounts.serializers import UserSerializer
+from rest_framework import viewsets
+
+
+# ViewSets define the view behavior.
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

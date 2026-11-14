@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "corsheaders",
+    "django_filters",
     "core.apps.CoreConfig",
     "accounts.apps.AccountsConfig",
     "blog.apps.BlogConfig",
@@ -140,7 +141,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
+# Static files
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "static/"
+
+# Media files
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "/media/"
 
 
 # Email
